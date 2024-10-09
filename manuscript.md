@@ -7,8 +7,10 @@ Key problems to be asked for every project:
 3. What are the insights or contributions of the proposed work to the research community?
 ### Problem & Key Challenges
 Current approaches still have problems with:
+- Current work in multimodal affective computing focuses on the emotions that are synthesized by the video, rather than the emotions that the video conveys and elicits.
+- 
 ### Contributions
-
+- **Dataset:** 
 
 ## Motivation
 **A reasonable motivation is extremely important.**
@@ -24,13 +26,18 @@ Will focus on introducing new methods to solve the key challenges. Current ideas
 
 ## Experiments
 ### Datasets
-
+- my dataset
 ### Testing Benchmarks
 
 ### Comparison
 
 ### Ablation Studies
-
+- Unimodality
+  - audio
+  - text
+  - video
+- Multimodality
+  - modality interactions
 ### Model Analysis
 visual analysis
 
