@@ -26,7 +26,7 @@ Will focus on introducing new methods to solve the key challenges. Current ideas
 
 ## Experiments
 ### Datasets
-- my dataset
+- My dataset
 ### Testing Benchmarks
 
 ### Comparison
