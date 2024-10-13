@@ -16,9 +16,11 @@ Current approaches still have problems with:
 **A reasonable motivation is extremely important.**
 
 Will focus on introducing new methods to solve the key challenges. Current ideas might include:
-1. Motivation:
-2. References:
-3. Prilimery:
+### Motivation:
+
+### References:
+
+### Prilimery:
 
 
 ## Methodology
