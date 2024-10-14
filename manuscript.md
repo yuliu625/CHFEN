@@ -10,7 +10,8 @@ Current approaches still have problems with:
 - Current work in multimodal affective computing focuses on the emotions that are synthesized by the video, rather than the emotions that the video conveys and elicits.
 - 
 ### Contributions
-- **Dataset:** 
+- **Dataset:** DNSV dataset
+  - Our 
 
 ## Motivation
 **A reasonable motivation is extremely important.**
@@ -35,14 +36,18 @@ Will focus on introducing new methods to solve the key challenges. Current ideas
 
 ### Ablation Studies
 - Unimodality
-  - audio
-  - text
-  - video
+  - **Audio:** What if without audio modality?
 - Multimodality
-  - modality interactions
+  - **Modality interactions：**
+    - Cross attention
+    - Blip image captioner
+- Module
+  - **Conditioned image encoder:**
+  - **Conditioned text encoder:**
 ### Model Analysis
 visual analysis
 
 quantitative comparison
 
 ### Applications
+
