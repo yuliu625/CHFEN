@@ -1,9 +1,21 @@
-from torch.utils.data import Dataset
+# from torch.utils.data import Dataset
+#
+#
+# class FrameDataset(Dataset):
+#     def __init__(self, frames, labels):
+#         pass
+#
+#     def __len__(self):
+#         return len(frames)
+#
+#     def __getitem__(self, idx):
+#         pass
 
 
-class FrameDataset(Dataset):
-    def __init__(self, frames, labels):
+class Frame:
+    def __init__(self, frame):
         pass
+
 
 
 if __name__ == '__main__':
