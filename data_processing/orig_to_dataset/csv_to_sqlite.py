@@ -52,6 +52,6 @@ def main(folder_path_str, account_name):
 
 
 if __name__ == '__main__':
-    folder_path_str = r"/home/liuyu/liuyu_data/datasets/my/douyin/yangshixinwen"
-    account_name = "yangshixinwen"
+    folder_path_str = r""
+    account_name = ""
     main(folder_path_str, account_name)

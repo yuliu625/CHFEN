@@ -15,6 +15,6 @@ def move_videos(source_dir_str, destination_dir_str):
 
 
 if __name__ == '__main__':
-    source_dir_str = r"/home/liuyu/liuyu_data/datasets/paper1/yangshixinwen"
-    destination_dir_str = r"/home/liuyu/liuyu_data/datasets/paper1/yangshixinwen_"
+    source_dir_str = r""
+    destination_dir_str = r""
     move_videos(source_dir_str, destination_dir_str)
