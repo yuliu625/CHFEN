@@ -1,5 +1,8 @@
 models:
   roberta:
+  blip:
+  ViT:
+  AST:
 
 datasets:
   origin:

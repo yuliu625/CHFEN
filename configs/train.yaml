@@ -1,3 +1,28 @@
+loggers:
+  wandb:
+    project:
+    name:
 
+model:
+  name:
+
+dataset:
+
+dataloader:
+  batch_size:
+
+trainer:
+  epoch:
+    start:
+    end:
+  lr:
+  scheduler:
+  device:
+
+checkpoint:
+  is_from_checkpoint:
+  name:
+  load_path:
+  save_path:
 
 
