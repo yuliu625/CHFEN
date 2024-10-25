@@ -5,7 +5,7 @@ models:
   AST:
 
 datasets:
-  base_dir_path:
+  base_dir:
   origin:
   train:
   val:
