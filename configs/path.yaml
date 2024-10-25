@@ -5,7 +5,7 @@ models:
   AST:
 
 datasets:
-  base_dir:
+  base_dir: 'D:\dcmt\code\python\playground\sample_videos\renminribao'
   origin:
   train:
   val:
