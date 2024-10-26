@@ -1,7 +1,10 @@
 # from .title_dataset import
 from .frames import Frames
+from .label_map import label_map
 
 import torch
+# import torchvision.transforms as transforms
+# import torchaudio
 from torch.utils.data import Dataset
 
 import pandas as pd
@@ -23,7 +26,7 @@ class EmotionDataset(Dataset):
         self.base_subtitle_dir = Path(self.path_config['datasets']['base_subtitle_dir'])
         self.base_audio_dir = Path(self.path_config['datasets']['base_audio_dir'])
 
-        # 导入主控制文件
+        # 导入主控制文件。
         self.all_data = pd.read_json(self.path_config['datasets']['base_all_data'], dtype={'video_id': str})
 
     def __len__(self):
@@ -32,7 +35,9 @@ class EmotionDataset(Dataset):
     def __getitem__(self, idx):
         return {
             'title': self.all_data.loc[idx, 'title'],
-            'emotion': self.all_data.loc[idx, 'emotion'],
+            'emotion_name': self.all_data.loc[idx, 'emotion'],
+            'emotion': label_map[self.all_data.loc[idx, 'emotion']],
+            'frames': self.get_frames_data(self.all_data.loc[idx, 'video_id']),
         }
 
     def get_frames_data(self, video_id):
