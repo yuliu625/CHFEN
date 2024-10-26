@@ -36,7 +36,7 @@ class Frames:
             'resolution': self.video_clip.size
         }
 
-    def get_frame_image_by_time(self, timestamps_list):
+    def get_frame_image_by_time(self):
         frames_image = []
         for timestamp in self.default_timestamps_list:
             frame = self.video_clip.get_frame(timestamp)
@@ -44,8 +44,18 @@ class Frames:
 
         return frames_image
 
-    def get_frame_subtitle_by_time(self, timestamps_list):
-        pass
+    def get_frame_subtitle_by_time(self):
+        frames_subtitle = []
+        timestamps_list = [pysrt.SubRipTime(seconds=timestamp) for timestamp in self.default_timestamps_list]
+        for timestamp in timestamps_list:
+            subtitle = next((sub.text for sub in self.subtitle if sub.start <= target_time <= sub.end),
+                            "No subtitle found at this time")
+
+            # 添加字幕到结果中
+            frames_subtitle.append(subtitle)
+
+        return frames_subtitle
+
 
 
 
