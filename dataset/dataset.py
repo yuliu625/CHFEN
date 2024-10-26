@@ -17,7 +17,7 @@ class EmotionDataset(Dataset):
         self.path_config = OmegaConf.load('../configs/path.yaml')
         self.all_data = pd.read_json(self.path_config['datasets']['base_all_data'], dtype={'video_id': str})
 
-        # 加载视频字幕，音频的路径
+        # 加载视频、字幕、音频的路径。
         self.base_video_dir = self.path_config['datasets']['base_video_dir']
         self.base_subtitle_dir = self.path_config['datasets']['base_subtitle_dir']
         self.base_audio_dir = self.path_config['datasets']['base_audio_dir']
