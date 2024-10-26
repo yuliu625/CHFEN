@@ -11,24 +11,28 @@ class Frames:
     输入视频，
     返回采样的已经匹配的图像和字幕。
     """
-    def __init__(self, video_id):
+    def __init__(self, video_id, path_config_path_str='../configs/path.yaml'):
         # 导入配置。
-        self.path_config = OmegaConf.load('../configs/path.yaml')
-        self.base_dir_path = Path(self.path_config['datasets']['base_dir'])
+        self.path_config = OmegaConf.load(path_config_path_str)
+
+        # 加载视频、字幕的路径。
+        self.base_dir = Path(self.path_config['datasets']['base_dir'])
+        self.base_video_dir = Path(self.path_config['datasets']['base_video_dir'])
+        self.base_subtitle_dir = Path(self.path_config['datasets']['base_subtitle_dir'])
 
         # 加载视频图像和字幕。
         self.video_path, self.subtitle_path = self.get_video_and_subtitle_path(video_id)
         self.video_clip = self.load_video(self.video_path)
         self.subtitle = self.load_subtitle(self.subtitle_path)
 
-        # 进行采样的序列。
+        # 进行采样的序列方法。
         self.duration = math.floor(self.get_video_info()['duration'])
         self.default_timestamps_list = [i for i in range(self.duration + 1)]
 
     def get_video_and_subtitle_path(self, video_id):
         """得到视频和字幕的路径。按照dataset文件结构。"""
-        video_path = self.base_dir_path / 'video' / f"{video_id}.mp4"
-        subtitle_path = self.base_dir_path / 'subtitle' / f"{video_id}.srt"
+        video_path = self.base_video_dir / f"{video_id}.mp4"
+        subtitle_path = self.base_subtitle_dir / f"{video_id}.srt"
         return video_path, subtitle_path
 
     def load_video(self, video_path):
@@ -40,7 +44,7 @@ class Frames:
         return pysrt.open(subtitle_path)
 
     def get_video_info(self):
-        """视频基本信息。"""
+        """视频metadata。"""
         return {
             'duration': self.video_clip.duration,
             'fps': self.video_clip.fps,
