@@ -23,7 +23,7 @@ Current approaches still have problems with:
     And there is still room for future research toward continuous emotion modeling and emotion intensity.
   - **Feedback-based annotation:** 
     The result of data annotation is the viewer's emotional response, which is more realistic and reliable, and has more practical value.
-- **Network:** CHFEN Conditioned Hybrid Fusion Emotion Net
+- **Network:** CHFEN Condition-based Hybrid Fusion Emotion Net
   - **Enhanced modality interactions:** 
     Using news title with a significant level of profile as a query to enhance feature extraction.
   - **Balanced the inherent differences between image and text modality:** 

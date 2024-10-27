@@ -1,0 +1,22 @@
+title:
+  roberta:
+    path: ''
+
+
+text:
+  roberta:
+    path: ''
+  blip:
+    path: ''
+
+
+image:
+  vit:
+    path: ''
+
+
+audio:
+  wav2vec2:
+    path: ''
+
+

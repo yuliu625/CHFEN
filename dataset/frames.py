@@ -58,7 +58,7 @@ class Frames:
             frame = self.video_clip.get_frame(timestamp)
             frames_image.append(frame)
 
-        return frames_image
+        return frames_image  # 这里返回的是numpy.array，做其他任务需要转换和处理的。
 
     def get_frame_subtitle_by_time(self):
         """返回帧的字幕。复杂度可优化。"""

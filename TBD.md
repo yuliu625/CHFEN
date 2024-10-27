@@ -26,3 +26,6 @@
 - 决策融合
   - 是否需要设置gate，似乎有gate决定各个模态的权重会更合理。
 
+## Another structure
+### LLM backbone
+encode to text embedding

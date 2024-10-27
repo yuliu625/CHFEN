@@ -1,3 +1,10 @@
 label_map:
+  path: ''
 
-batch_size:
+is_need_audio: True
+
+train:
+  path:
+
+val:
+  path:

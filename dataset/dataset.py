@@ -1,5 +1,6 @@
 # from .title_dataset import
 from .frames import Frames
+from .audio import Audio
 from .label_map import label_map
 
 import torch
@@ -12,11 +13,11 @@ from omegaconf import OmegaConf
 from pathlib import Path
 
 
-class EmotionDataset(Dataset):
+class MultimodalDataset(Dataset):
     """
     加载原始的多模态数据。
     """
-    def __init__(self, path_config_path_str='../configs/path.yaml'):
+    def __init__(self, is_need_audio=True, path_config_path_str='../configs/path.yaml'):
         # 导入配置。
         self.path_config = OmegaConf.load(path_config_path_str)
 
@@ -27,18 +28,25 @@ class EmotionDataset(Dataset):
         self.base_audio_dir = Path(self.path_config['datasets']['base_audio_dir'])
 
         # 导入主控制文件。
+        self.is_need_audio = is_need_audio
         self.all_data = pd.read_json(self.path_config['datasets']['base_all_data'], dtype={'video_id': str})
 
     def __len__(self):
         return len(self.all_data)
 
     def __getitem__(self, idx):
-        return {
+        frames_data = self.get_frames_data(self.all_data.loc[idx, 'video_id'])
+        result = {
             'title': self.all_data.loc[idx, 'title'],
             'emotion_name': self.all_data.loc[idx, 'emotion'],
             'emotion': label_map[self.all_data.loc[idx, 'emotion']],
-            'frames': self.get_frames_data(self.all_data.loc[idx, 'video_id']),
+            'scene': frames_data['images'],
+            'subtitle': frames_data['subtitles'],
         }
+        if self.is_need_audio:
+            audio_data = self.get_audio_data(self.all_data.loc[idx, 'video_id'])
+            result = result | audio_data
+        return result
 
     def get_frames_data(self, video_id):
         frames = Frames(video_id)
@@ -48,6 +56,14 @@ class EmotionDataset(Dataset):
         return {
             'images': frames_image,
             'subtitles': frames_subtitle
+        }
+
+    def get_audio_data(self, video_id):
+        audio = Audio(video_id)
+        waveform, sample_rate = audio.load_audio()
+        return {
+            'audio_waveform': waveform,
+            'audio_sample_rate': sample_rate
         }
 
 
