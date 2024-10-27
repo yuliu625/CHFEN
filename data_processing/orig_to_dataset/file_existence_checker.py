@@ -21,9 +21,11 @@ if __name__ == '__main__':
     base_dir = Path(path_config['datasets']['base_dir'])
     video_dir = base_dir / 'video'
     subtitle_dir = base_dir / 'subtitle'
+    audio_dir = base_dir / 'audio'
 
     all_data_path = base_dir / 'all_data.json'
     all_data = get_all_data(all_data_path)
 
     check_files(all_data, video_dir, '.mp4')
     check_files(all_data, subtitle_dir, '.srt')
+    check_files(all_data, audio_dir, '.wav')

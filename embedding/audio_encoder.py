@@ -15,8 +15,8 @@ class AudioEncoder:
         self.encoder_path = Path(self.config['audio'][model]['path'])
 
         # 加载 Wav2Vec2 预处理器和模型
-        self.processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
-        self.model = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base-960h")
+        self.processor = Wav2Vec2Processor.from_pretrained(self.encoder_path)
+        self.model = Wav2Vec2Model.from_pretrained(self.encoder_path)
 
     # 读取音频文件（假设为 .wav 格式）
     # def load_audio(file_path):
@@ -34,7 +34,7 @@ class AudioEncoder:
         # 预处理音频数据
         inputs = self.processor(waveform.squeeze().numpy(), sampling_rate=16000, return_tensors="pt", padding=True)
 
-        # 通过 Wav2Vec2 模型生成嵌入
+        # 通过 Wav2Vec2 模型生成embedding
         with torch.no_grad():
             outputs = self.model(inputs.input_values)
 

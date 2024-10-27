@@ -1,11 +1,9 @@
-# from .title_dataset import
 from .frames import Frames
 from .audio import Audio
 from .label_map import label_map
 
 import torch
 # import torchvision.transforms as transforms
-# import torchaudio
 from torch.utils.data import Dataset
 
 import pandas as pd
@@ -13,7 +11,7 @@ from omegaconf import OmegaConf
 from pathlib import Path
 
 
-class MultimodalDataset(Dataset):
+class OriginalMultimodalDataset(Dataset):
     """
     加载原始的多模态数据。
     """
