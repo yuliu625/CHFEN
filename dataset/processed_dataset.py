@@ -13,6 +13,19 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
 
     def __getitem__(self, idx):
         data = super().__getitem__(idx)
+        return data
+
+    def transform_image(self):
+        """将图片进行处理转换。主要是resize。"""
+        pass
+
+    def get_facial_image(self):
+        """通过scene得到人脸。"""
+        pass
+
+
+def build_transform():
+    pass
 
 
 if __name__ == '__main__':

@@ -1,12 +1,20 @@
 title:
   roberta:
     path: ''
+  xlm-roberta:
+    path: 'D:\dcmt\model\hf\FacebookAI\xlm-roberta-base'
+  clip:
+    path: ''
 
 
 text:
+  blip:
+    path: ''
   roberta:
     path: ''
-  blip:
+  xlm-roberta:
+    path: 'D:\dcmt\model\hf\FacebookAI\xlm-roberta-base'
+  clip:
     path: ''
 
 
