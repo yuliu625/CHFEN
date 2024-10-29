@@ -3,6 +3,9 @@ models:
   blip:
   ViT:
   AST:
+  clip:
+  wav2vec2:
+
 
 datasets:
   base_dir: 'D:\dcmt\dataset\news_emotion'
@@ -13,7 +16,8 @@ datasets:
 
   origin:
   train:
-  val:
+  validation:
+
 
 checkpoint:
   base_dir:

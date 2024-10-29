@@ -7,9 +7,9 @@ import torchvision.transforms as transforms
 
 
 class ProcessedMultimodalDataset(OriginalMultimodalDataset):
-    def __init__(self, image_transform, is_need_audio=True, path_config_path_str='../configs/path.yaml'):
+    def __init__(self, is_need_audio=True, path_config_path_str='../configs/path.yaml'):
         super().__init__(is_need_audio, path_config_path_str)
-        self.image_transform = image_transform
+        # self.image_transform = image_transform
 
         self.text_encoder = TextEncoder()
         self.captioner = Captioner()
