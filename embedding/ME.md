@@ -7,12 +7,16 @@
 - clip
 
 ## Image
+### image to text
 - blip captioner for text gen
-
+### image
 - vit
 - video transformer
-- 
-
+- clip image encoder
+### facial
+- FaceNet
+- ArcFace
+- FER
 
 
 ## Audio

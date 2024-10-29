@@ -36,6 +36,12 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
     def get_image_embedding(self):
         """获取image部分的embedding。会输入conditioned_image_encoder。"""
 
+    def get_face_embedding(self):
+        pass
+
+    def get_scene_embedding(self):
+        pass
+
     def get_audio_embedding(self):
         """获取audio部分的embedding。直接输入最终的decision模块。需要判断是否"""
 
