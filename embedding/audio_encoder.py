@@ -7,7 +7,7 @@ from omegaconf import OmegaConf
 
 
 class AudioEncoder:
-    def __init__(self, model='wav2vec2', encoder_config_path_str='../config/encoder.yaml'):
+    def __init__(self, model='wav2vec2', encoder_config_path_str='../configs/encoder.yaml'):
         # 导入配置。
         self.config = OmegaConf.load(encoder_config_path_str)
 
@@ -28,6 +28,9 @@ class AudioEncoder:
         # 加载音频并确保采样率为 16kHz（Wav2Vec2 模型要求）
         # waveform, sample_rate = load_audio(file_path)
         waveform, sample_rate = audio
+
+        waveform = waveform.mean(dim=0)  # 转换为单声道
+
         if sample_rate != 16000:
             waveform = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=16000)(waveform)
 
@@ -38,8 +41,10 @@ class AudioEncoder:
         with torch.no_grad():
             outputs = self.model(inputs.input_values)
 
+        # return outputs
         # 获取最后一层隐藏状态作为音频嵌入
-        embeddings = outputs.last_hidden_state
+        # embeddings = outputs.extract_features  # 不选择这个，这个是卷积的低层次信息
+        embeddings = outputs.last_hidden_state  # torch.Size([1, length, 768])
         return embeddings
 
 
