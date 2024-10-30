@@ -4,7 +4,7 @@ title:
   xlm-roberta:
     path: 'D:\dcmt\model\hf\FacebookAI\xlm-roberta-base'
   clip:
-    path: ''
+    path: 'D:\dcmt\model\hf\openai\clip-vit-base-patch32'
 
 
 text:
@@ -15,7 +15,7 @@ text:
   xlm-roberta:
     path: 'D:\dcmt\model\hf\FacebookAI\xlm-roberta-base'
   clip:
-    path: ''
+    path: 'D:\dcmt\model\hf\openai\clip-vit-base-patch32'
 
 
 image:
@@ -25,6 +25,6 @@ image:
 
 audio:
   wav2vec2:
-    path: ''
+    path: 'D:\dcmt\model\hf\facebook\wav2vec2-base-960h'
 
 

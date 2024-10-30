@@ -1,5 +1,8 @@
 video_path_str: 'D:\dcmt\code\python\playground\sample_videos\renminribao'
 subtitle_path_str: 'D:\dcmt\code\python\playground\sample_videos\subtitle\renminribao'
+audio_path_str: 'D:\dcmt\dataset\news_emotion\audio'
+
 video_eg_path_str: 'D:\dcmt\code\python\playground\sample_videos\renminribao\7183343454993485115.mp4'
 subtitle_eg_path_str: 'D:\dcmt\code\python\playground\sample_videos\subtitle\renminribao\7183343454993485115.srt'
+audio_eg_path_str: 'D:\dcmt\dataset\news_emotion\audio\7183343024657747258.wav'
 
