@@ -17,7 +17,15 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
 
     def __getitem__(self, idx):
         data = super().__getitem__(idx)
-        return data
+        result = {
+            'emotion': data['emotion'],
+            'title': data['title'],
+            # 'audio': data['audio'],
+        }
+        if self.is_need_audio:
+            audio_data = self.get_audio_embedding(data['audio'])
+            result = result | audio_data
+        return result
 
     def transform_image(self):
         """将图片进行处理转换。主要是resize。"""
@@ -42,8 +50,9 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
     def get_scene_embedding(self):
         pass
 
-    def get_audio_embedding(self):
+    def get_audio_embedding(self, audio):
         """获取audio部分的embedding。直接输入最终的decision模块。需要判断是否"""
+        return self.audio_encoder.encode(audio)
 
     def build_image_transform(self):
         """默认的自建图片transform pipeline。"""
