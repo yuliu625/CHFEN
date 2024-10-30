@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     # 创建 AdaptiveProjectionLayer
     projection_layer = AdaptiveProjectionLayer(output_dim)
-    
+
     # 输入张量
     input_data = torch.randn(batch_size, num_emb, embedding_dim)  # (batch, num_emb, embedding_dim)
     output_data = projection_layer(input_data)
