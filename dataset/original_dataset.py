@@ -38,8 +38,8 @@ class OriginalMultimodalDataset(Dataset):
             'title': self.all_data.loc[idx, 'title'],
             'emotion_name': self.all_data.loc[idx, 'emotion'],
             'emotion': label_map[self.all_data.loc[idx, 'emotion']],
-            'scene': frames_data['images'],
-            'subtitle': frames_data['subtitles'],
+            'scenes': frames_data['images'],  # 这是一个list。
+            'subtitles': frames_data['subtitles'],  # 这是一个list。
         }
         if self.is_need_audio:
             audio_data = self.get_audio_data(self.all_data.loc[idx, 'video_id'])
