@@ -1,12 +1,17 @@
 import torch
-from transformers import RobertaTokenizer, RobertaModel
+
+from transformers import BlipProcessor, BlipForConditionalGeneration
+
+import numpy as np
+from PIL import Image
 
 from pathlib import Path
 from omegaconf import OmegaConf
 
 
-class TextEncoder:
-    def __init__(self, model='roberta', encoder_config_path_str='../config/encoder.yaml'):
+class Captioner:
+    """caption生成器。"""
+    def __init__(self, model='blip', encoder_config_path_str='../configs/encoder.yaml'):
         # 导入配置。
         self.config = OmegaConf.load(encoder_config_path_str)
 
