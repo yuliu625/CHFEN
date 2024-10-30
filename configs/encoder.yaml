@@ -9,7 +9,7 @@ title:
 
 text:
   blip:
-    path: ''
+    path: 'D:\dcmt\model\hf\Salesforce\blip-image-captioning-large'
   roberta:
     path: ''
   xlm-roberta:
