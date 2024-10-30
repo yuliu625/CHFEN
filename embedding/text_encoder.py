@@ -27,11 +27,14 @@ class TextEncoder:
 
         with torch.no_grad():
             outputs = self.model(**inputs)
-            # embeddings = outputs.last_hidden_state
+            embeddings = outputs.last_hidden_state  # torch.Size([1, 128, 768])必然被截断或填充到128。
             # embedding = outputs.last_hidden_state.mean(dim=1)
+            # embeddings = outputs.pooler_output  # CLS embedding经过一定处理，torch.Size([1, 768])。
 
-        return outputs
+        # return outputs
+        return embeddings
 
 
 if __name__ == '__main__':
-    pass
+    text_encoder = TextEncoder()
+    print(text_encoder.config)
