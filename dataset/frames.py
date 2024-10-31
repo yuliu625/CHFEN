@@ -66,7 +66,7 @@ class Frames:
         for timestamp in self.default_timestamps_list:
             timestamp = pysrt.SubRipTime(seconds=timestamp)
 
-            found_subtitle = None
+            found_subtitle = ""
             for subtitle in self.subtitle:
                 if subtitle.start <= timestamp <= subtitle.end:
                     found_subtitle = subtitle.text
