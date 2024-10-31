@@ -27,7 +27,10 @@ class ImageEncoder:
             outputs = self.model(**inputs)
 
         # 提取最后一层的CLS token embedding作为图片的embedding
-        image_embedding = outputs.last_hidden_state[:, 0, :]
+        # image_embedding = outputs.last_hidden_state[:, 0, :]
+        # image_embedding = outputs.last_hidden_state
+        image_embedding = outputs.pooler_output
+        # image_embedding = outputs
 
         return image_embedding
 
