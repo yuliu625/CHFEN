@@ -1,18 +1,20 @@
 from .original_dataset import OriginalMultimodalDataset
 
-from embedding import TextEncoder, Captioner, AudioEncoder
+from embedding import TextEncoder, Captioner, ImageEncoder, FaceExtractor, AudioEncoder
 
 import torch
 import torchvision.transforms as transforms
 
 
 class ProcessedMultimodalDataset(OriginalMultimodalDataset):
-    def __init__(self, is_need_audio=True, path_config_path_str='../configs/path.yaml'):
+    def __init__(self, is_need_caption, is_need_audio=True, path_config_path_str='../configs/path.yaml'):
         super().__init__(is_need_audio, path_config_path_str)
         # self.image_transform = image_transform
 
         self.text_encoder = TextEncoder()
         self.captioner = Captioner()
+        self.image_encoder = ImageEncoder()
+        self.face_extractor = FaceExtractor()
         self.audio_encoder = AudioEncoder()
 
     def __getitem__(self, idx):
@@ -20,6 +22,7 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
         result = {
             'emotion': data['emotion'],
             'title': data['title'],
+            'title_embedding': self.text_encoder.encode(data['title']),
             # 'audio': data['audio'],
         }
         if self.is_need_audio:
@@ -31,16 +34,28 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
         """将图片进行处理转换。主要是resize。"""
         pass
 
-    def get_facial_image(self):
-        """通过scene得到人脸。"""
-        pass
+    def get_faces_and_ratios_list(self, np_array_image):
+        """
+        输入np_array的图片，返回一个元组的list，分别是(face_pil_image,face_area_ration)。
+        这里默认输入的是scene。
+        """
+        faces_with_ratios_list = self.face_extractor.extract_face(np_array_image)
+        return faces_with_ratios_list
 
     def get_title_embedding(self, title):
         """获取标题的embedding。"""
         return self.text_encoder.encode(title)
 
-    def get_text_embedding(self, text, scene, is_need_caption=True):
+    def get_text_embedding(self, subtitle, scene, is_need_caption=True):
         """获得text部分的embedding。会输入conditioned_text_encoder。"""
+        caption = self.captioner.generate(scene)
+        result = ''
+        if is_need_caption:
+            result = subtitle + '\n' + caption
+        else:
+            result = subtitle
+        text_embedding = self.text_encoder.encode(result)
+        return text_embedding
 
     def generate_caption(self, np_array_image):
         """输入ndarray图片，输出text的caption"""
