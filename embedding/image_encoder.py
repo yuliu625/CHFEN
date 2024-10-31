@@ -2,6 +2,8 @@ import torch
 
 from transformers import ViTModel, ViTFeatureExtractor
 
+from PIL import Image
+
 from pathlib import Path
 from omegaconf import OmegaConf
 
@@ -26,6 +28,13 @@ class ImageEncoder:
 
         # 提取最后一层的CLS token embedding作为图片的embedding
         image_embedding = outputs.last_hidden_state[:, 0, :]
+
+        return image_embedding
+
+    def trans_np_array_to_image(self, np_array_image):
+        """由于moviepy中的帧图片是ndarray，这里需要转换之后才能输入blip captioner。"""
+        pil_img = Image.fromarray(np_array_image)
+        return pil_img
 
 
 if __name__ == '__main__':

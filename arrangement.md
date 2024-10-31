@@ -1,5 +1,5 @@
 # 论文安排
-CHFEN: Condition-based Hybrid Fusion Emotion Net for Short Videos Affective Computing
+CHFEN: Conditional Hybrid Fusion Emotion Net for Short Video Affective Computing
 
 ## 各部分
 ### Abstract
