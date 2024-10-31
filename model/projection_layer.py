@@ -2,19 +2,40 @@ import torch
 import torch.nn as nn
 
 
-class AdaptiveProjectionLayer(nn.Module):
-    def __init__(self, output_dim):
+class ProjectionLayer(nn.Module):
+    """
+    一般的projection，
+    需要指定输入和输出。
+    """
+    def __init__(self, input_dim, output_dim):
         super().__init__()
-        self.output_dim = output_dim
-        self.projection = None  # 初始化时不定义 Linear 层
+        self.projection = nn.Linear(input_dim, output_dim)
 
     def forward(self, x):
-        # 检查 projection 层是否已定义，如果未定义则根据输入维度动态定义
-        if self.projection is None:
-            input_dim = x.size(-1)  # 获取输入的最后一个维度
-            self.projection = nn.Linear(input_dim, self.output_dim)
+        return self.projection(x)
 
-        # 将输入投影到指定的输出维度
+
+class AdaptiveProjectionLayer(nn.Module):
+    """
+    自适应的投影层，适用于有大量embedding_dim需要改变的时候。
+    可以在第一次前向传播的时候，自动指定input_dim。
+    但是目前的问题是，torch.load会出现问题。或许可以通过在导入前自动进行一次前向传播解决。
+    """
+    def __init__(self, output_dim):
+        super(AdaptiveProjectionLayer, self).__init__()
+        self.output_dim = output_dim
+        self.projection = None  # 初始时不定义 Linear 层
+
+    def reset_projection(self, input_dim):
+        """初始化 projection 层的参数"""
+        self.projection = nn.Linear(input_dim, self.output_dim)
+        self.projection.reset_parameters()  # 重置参数以保证一致性
+
+    def forward(self, x):
+        # 检查 projection 层是否已定义
+        if self.projection is None:
+            input_dim = x.size(-1)
+            self.reset_projection(input_dim)
         return self.projection(x)
 
 
