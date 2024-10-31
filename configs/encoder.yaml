@@ -20,7 +20,7 @@ text:
 
 image:
   vit:
-    path: ''
+    path: 'D:\dcmt\model\hf\google\vit-base-patch16-224-in21k'
 
 
 audio:

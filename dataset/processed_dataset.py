@@ -39,7 +39,7 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
         """获取标题的embedding。"""
         return self.text_encoder.encode(title)
 
-    def get_text_embedding(self, is_need_caption=True):
+    def get_text_embedding(self, text, scene, is_need_caption=True):
         """获得text部分的embedding。会输入conditioned_text_encoder。"""
 
     def generate_caption(self, np_array_image):
