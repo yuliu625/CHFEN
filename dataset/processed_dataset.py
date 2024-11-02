@@ -5,12 +5,16 @@ from embedding import TextEncoder, Captioner, ImageEncoder, FaceExtractor, Audio
 import torch
 import torchvision.transforms as transforms
 
+from pathlib import Path
+from omegaconf import OmegaConf
+
 
 class ProcessedMultimodalDataset(OriginalMultimodalDataset):
     def __init__(self, is_need_caption, is_need_audio=True, path_config_path_str='../configs/path.yaml'):
         super().__init__(is_need_audio, path_config_path_str)
         # self.image_transform = image_transform
 
+        # 定义好的一系列的处理和编码器。
         self.text_encoder = TextEncoder()
         self.captioner = Captioner()
         self.image_encoder = ImageEncoder()
@@ -68,11 +72,15 @@ class ProcessedMultimodalDataset(OriginalMultimodalDataset):
     def get_image_embedding(self):
         """获取image部分的embedding。会输入conditioned_image_encoder。"""
 
-    def get_face_embedding(self):
-        pass
+    def get_face_embedding(self, scene):
+        """聚合多张脸的语义信息。返回结果是(num_faces,face_embedding)"""
+        faces_with_ratios_list = self.get_faces_and_ratios_list(scene)
+        faces_embedding = None
+        for faces_with_ratios in faces_with_ratios_list:
+            pass
 
-    def get_scene_embedding(self):
-        pass
+    def get_scene_embedding(self, scene):
+        return self.image_encoder.encode(scene)
 
     def get_audio_embedding(self, audio):
         """获取audio部分的embedding。直接输入最终的decision模块。需要判断是否"""
