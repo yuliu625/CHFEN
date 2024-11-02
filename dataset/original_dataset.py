@@ -53,7 +53,7 @@ class OriginalMultimodalDataset(Dataset):
         frames_subtitle = frames.get_frame_subtitle_by_time()
         return {
             'images': frames_image,
-            'subtitles': frames_subtitle
+            'subtitles': frames_subtitle,
         }
 
     def get_audio_data(self, video_id):
