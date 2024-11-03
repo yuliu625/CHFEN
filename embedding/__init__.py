@@ -1,6 +1,9 @@
 # __all__ = []
 
 
+from .total_encoder import TotalEncoder
+
+
 # from .title_encoder import TitleEncoder
 from .text_encoder import TextEncoder
 
