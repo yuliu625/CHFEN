@@ -1,6 +1,6 @@
 # __all__ = []
 
-# from .model import
+from .model import CHFEN
 
 
 
