@@ -1,7 +1,8 @@
 from embedding import TotalEncoder
-# from .feature_level import
-# from .decision_level import
-from .projection_layer import ProjectionLayer
+from model.feature_level import FeatureModule
+from model.decision_level import DecisionModule
+from model.classifier import EmotionClassifier
+from model.projection_layer import ProjectionLayer
 
 import torch
 import torch.nn as nn
@@ -14,9 +15,13 @@ class CHFEN(nn.Module):
     def __init__(self):
         super().__init__()
         self.total_encoder = TotalEncoder()
+        self.feature_module = FeatureModule()
+        # self.decision_module = DecisionModule()
 
-    def forward(self, x):
-        pass
+    def forward(self, data):
+        out = self.total_encoder(data)
+        out = self.feature_module(out)
+        return out
 
 
 if __name__ == '__main__':
