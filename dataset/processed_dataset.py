@@ -1,4 +1,4 @@
-from .original_dataset import OriginalMultimodalDataset
+from dataset.original_dataset import OriginalMultimodalDataset
 
 from embedding import TextEncoder, Captioner, ImageEncoder, FaceExtractor, AudioEncoder
 
