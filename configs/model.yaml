@@ -3,6 +3,9 @@ total_encoder:
   is_need_audio: True
 
 feature_level:
+  conditioned_image_encoder:
+
+  conditioned_text_encoder:
 
 
 decision_level:
