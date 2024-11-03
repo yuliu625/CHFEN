@@ -37,12 +37,12 @@ class OriginalMultimodalDataset(Dataset):
         result = {
             'title': self.all_data.loc[idx, 'title'],
             'emotion_name': self.all_data.loc[idx, 'emotion'],
-            'emotion': label_map[self.all_data.loc[idx, 'emotion']],
+            'emotion': torch.tensor(label_map[self.all_data.loc[idx, 'emotion']], dtype=torch.long),
             'scenes': frames_data['images'],  # 这是一个list。
             'subtitles': frames_data['subtitles'],  # 这是一个list。
         }
         if self.is_need_audio:
-            audio_data = self.get_audio_data(self.all_data.loc[idx, 'video_id'])
+            audio_data = self.get_audio_data_dict(self.all_data.loc[idx, 'video_id'])
             result = result | audio_data
         return result
 
@@ -56,7 +56,7 @@ class OriginalMultimodalDataset(Dataset):
             'subtitles': frames_subtitle,
         }
 
-    def get_audio_data(self, video_id):
+    def get_audio_data_dict(self, video_id):
         audio = Audio(video_id)
         waveform, sample_rate = audio.load_audio()
         return {
