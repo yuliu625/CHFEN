@@ -1,6 +1,6 @@
-from .frames import Frames
-from .audio import Audio
-from .label_map import label_map
+from dataset.frames import Frames
+from dataset.audio import Audio
+from dataset.label_map import label_map
 
 import torch
 # import torchvision.transforms as transforms
@@ -17,6 +17,7 @@ class OriginalMultimodalDataset(Dataset):
     """
     def __init__(self, is_need_audio=True, path_config_path_str='../configs/path.yaml'):
         # 导入配置。
+        self.path_config_path_str = path_config_path_str
         self.path_config = OmegaConf.load(path_config_path_str)
 
         # 加载视频、字幕、音频的路径。
@@ -47,7 +48,7 @@ class OriginalMultimodalDataset(Dataset):
         return result
 
     def get_frames_data(self, video_id):
-        frames = Frames(video_id)
+        frames = Frames(video_id, path_config_path_str=self.path_config_path_str)
         video_info = frames.get_video_info()
         frames_image = frames.get_frame_image_by_time()
         frames_subtitle = frames.get_frame_subtitle_by_time()
@@ -57,7 +58,7 @@ class OriginalMultimodalDataset(Dataset):
         }
 
     def get_audio_data_dict(self, video_id):
-        audio = Audio(video_id)
+        audio = Audio(video_id, path_config_path_str=self.path_config_path_str)
         waveform, sample_rate = audio.load_audio()
         return {
             'audio_waveform': waveform,
