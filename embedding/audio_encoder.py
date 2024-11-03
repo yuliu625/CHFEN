@@ -45,7 +45,8 @@ class AudioEncoder:
         # 获取最后一层隐藏状态作为音频嵌入
         # embeddings = outputs.extract_features  # 不选择这个，这个是卷积的低层次信息
         # embeddings = outputs.last_hidden_state  # torch.Size([1, length, 768])
-        embeddings = outputs.pooler_output
+        # embeddings = outputs.pooler_output  # 没有这个
+        embeddings = outputs.last_hidden_state.max(dim=1).values
         return embeddings
 
 
