@@ -10,6 +10,7 @@ class Frames:
     """
     输入视频，
     返回采样的已经匹配的图像和字幕。
+    实例化这个类需要dataset的路径配置。
     """
     def __init__(self, video_id, path_config_path_str='../configs/path.yaml'):
         # 导入配置。
