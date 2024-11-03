@@ -1,9 +1,9 @@
-from .text_encoder import TextEncoder
-from .image_to_text import Captioner
-from .image_encoder import ImageEncoder
-from .face_extractor import FaceExtractor
+from embedding.text_encoder import TextEncoder
+from embedding.image_to_text import Captioner
+from embedding.image_encoder import ImageEncoder
+from embedding.face_extractor import FaceExtractor
 # from .facial_encoder import FacialEncoder
-from .audio_encoder import AudioEncoder
+from embedding.audio_encoder import AudioEncoder
 
 import torch
 import torch.nn as nn
@@ -23,11 +23,12 @@ class TotalEncoder(nn.Module):
         self.is_need_audio = is_need_audio
 
         # 定义好的一系列的处理和编码器。
-        self.text_encoder = TextEncoder()
-        self.captioner = Captioner()
-        self.image_encoder = ImageEncoder()
+        encoder_config_path_str = r'D:\dcmt\code\dl\paper\news_emotion\configs/encoder.yaml'
+        self.text_encoder = TextEncoder(encoder_config_path_str=encoder_config_path_str)
+        self.captioner = Captioner(encoder_config_path_str=encoder_config_path_str)
+        self.image_encoder = ImageEncoder(encoder_config_path_str=encoder_config_path_str)
         self.face_extractor = FaceExtractor()
-        self.audio_encoder = AudioEncoder()
+        self.audio_encoder = AudioEncoder(encoder_config_path_str=encoder_config_path_str)
 
     def forward(self, data):
         with torch.no_grad():
