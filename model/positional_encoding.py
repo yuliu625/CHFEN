@@ -7,6 +7,20 @@ from pathlib import Path
 from omegaconf import OmegaConf
 
 
+def positional_encoding(sequence_length, embedding_dim):
+    # 初始化位置编码矩阵
+    position_encoding = torch.zeros(sequence_length, embedding_dim)
+    # position 表示每个序列中的位置，i 表示 embedding 维度的索引
+    for pos in range(sequence_length):
+        for i in range(0, embedding_dim, 2):
+            # 偶数维度使用 sin 函数
+            position_encoding[pos, i] = math.sin(pos / (10000 ** (i / embedding_dim)))
+            # 奇数维度使用 cos 函数
+            if i + 1 < embedding_dim:
+                position_encoding[pos, i + 1] = math.cos(pos / (10000 ** ((i + 1) / embedding_dim)))
+    return position_encoding
+
+
 class ListPositionalEncoding(torch.nn.Module):
     def __init__(self, d_model, max_len=5000):
         super(ListPositionalEncoding, self).__init__()
