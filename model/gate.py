@@ -9,6 +9,7 @@ class ImageFusionLayer(nn.Module):
     """
     以cross attention实现的图片信息聚合，看起来最合理。
     query是由num_faces扩展得到的tensor。
+    这个模块似乎不需要位置编码。
     """
     def __init__(self, embedding_dim=768, num_heads=8):
         super().__init__()
