@@ -16,11 +16,15 @@ class CHFEN(nn.Module):
         super().__init__()
         self.total_encoder = TotalEncoder()
         self.feature_module = FeatureModule()
-        # self.decision_module = DecisionModule()
+        self.decision_module = DecisionModule()
+        self.classifier = EmotionClassifier()
 
     def forward(self, data):
-        out = self.total_encoder(data)
+        with torch.no_grad():
+            out = self.total_encoder(data)
         out = self.feature_module(out)
+        out = self.decision_module(out)
+        out = self.classifier(out)
         return out
 
 
