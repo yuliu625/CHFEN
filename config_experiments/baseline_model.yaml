@@ -1,0 +1,9 @@
+is_from_checkpoint: False
+
+model:
+
+dataset:
+
+checkpoint:
+  path_to_load:
+  path_to_save:
