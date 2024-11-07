@@ -1,9 +1,31 @@
 is_from_checkpoint: False
+device: 'cuda: 0'
+
+wandb:
+  init:
+    project: 'CHFEN'
+    name: 'baseline_lr_test_1'
+  config:
+    learning_rate: 1e-3
+    batch_size:
+    epoch: 30
+
+train:
+  epoch_start: 1
+  epoch_end: 30
+  learning_rate: 1e-3
+
+dataloader:
+  train:
+    dataset_config_path: 'D:\dcmt\code\dl\paper\news_emotion\config_experiments\train_dataset_path.yaml'
+    batch_size: 32
+  val:
+    dataset_config_path: 'D:\dcmt\code\dl\paper\news_emotion\config_experiments\val_dataset_path.yaml'
+    batch_size: 32
 
 model:
-
-dataset:
+  encoder_config_path: 'D:\dcmt\code\dl\paper\news_emotion\configs\encoder.yaml'
 
 checkpoint:
-  path_to_load:
-  path_to_save:
+  path_to_load: ''
+  dir_to_save: ''
