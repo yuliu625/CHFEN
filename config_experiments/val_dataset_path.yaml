@@ -1,0 +1,7 @@
+
+datasets:
+  base_dir: 'D:\dcmt\dataset\news_emotion'
+  base_all_data: 'D:\dcmt\dataset\news_emotion/all_data.json'
+  base_video_dir: 'D:\dcmt\dataset\news_emotion/video'
+  base_subtitle_dir: 'D:\dcmt\dataset\news_emotion/subtitle'
+  base_audio_dir: 'D:\dcmt\dataset\news_emotion/audio'
