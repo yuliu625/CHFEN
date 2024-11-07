@@ -1,0 +1,32 @@
+device: cpu
+
+title:
+  roberta:
+    path: ''
+  xlm-roberta:
+    path: 'D:\dcmt\model\hf\FacebookAI\xlm-roberta-base'
+  clip:
+    path: 'D:\dcmt\model\hf\openai\clip-vit-base-patch32'
+
+
+text:
+  blip:
+    path: 'D:\dcmt\model\hf\Salesforce\blip-image-captioning-large'
+  roberta:
+    path: ''
+  xlm-roberta:
+    path: 'D:\dcmt\model\hf\FacebookAI\xlm-roberta-base'
+  clip:
+    path: 'D:\dcmt\model\hf\openai\clip-vit-base-patch32'
+
+
+image:
+  vit:
+    path: 'D:\dcmt\model\hf\google\vit-base-patch16-224-in21k'
+
+
+audio:
+  wav2vec2:
+    path: 'D:\dcmt\model\hf\facebook\wav2vec2-base-960h'
+
+
