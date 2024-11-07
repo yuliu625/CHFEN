@@ -17,13 +17,13 @@ class TotalEncoder(nn.Module):
     整合的模块。
     将所有的dataset的输入encode成需要的各种embedding。
     """
-    def __init__(self, is_need_caption=True, is_need_audio=True,):
+    def __init__(self, encoder_config_path_str=r'D:\dcmt\code\dl\paper\news_emotion\configs/encoder.yaml', is_need_caption=True, is_need_audio=True,):
         super().__init__()
         self.is_need_caption = is_need_caption
         self.is_need_audio = is_need_audio
 
         # 定义好的一系列的处理和编码器。
-        encoder_config_path_str = r'D:\dcmt\code\dl\paper\news_emotion\configs/encoder.yaml'
+        # self.encoder_config_path_str = r'D:\dcmt\code\dl\paper\news_emotion\configs/encoder.yaml'
         self.text_encoder = TextEncoder(encoder_config_path_str=encoder_config_path_str)
         self.captioner = Captioner(encoder_config_path_str=encoder_config_path_str)
         self.image_encoder = ImageEncoder(encoder_config_path_str=encoder_config_path_str)
