@@ -99,8 +99,12 @@ class FeatureModule(nn.Module):
             'text_embedding_list': embedding_dict['text_embedding_list'],
             # 'text_embedding_sequence': torch.cat(embedding_dict['text_embedding_list'], dim=0),
         }
+        audio_embedding = embedding_dict['audio_embedding']
 
-        conditioned_query_embedding = title_embedding + self.learnable_query()
+        # 这里的全局query或许需要将标题和音频都加上。
+        conditioned_query_embedding = self.learnable_query() + title_embedding + audio_embedding
+
+        # 执行条件查询。
         image_embedding_sequence = self.conditional_image_encoder(conditioned_query_embedding, image_embedding_dict)
         text_embedding_sequence = self.conditional_text_encoder(conditioned_query_embedding, text_embedding_dict)
 
