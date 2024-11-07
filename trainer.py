@@ -81,7 +81,7 @@ def train_one_epoch(model, train_dataloader, loss_fn, optimizer, device, config=
     wandb.log({'train_loss': train_avg_loss})
 
 
-def evaluate_model(model, val_dataloader, loss_fn, device, cfg: OmegaConf):
+def evaluate_model(model, val_dataloader, loss_fn, device, config=None):
     # 开始评价
     model.eval()
 
