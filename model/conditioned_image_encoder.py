@@ -1,6 +1,7 @@
 from model.projection_layer import ProjectionLayer
 from model.positional_encoding import positional_encoding
 from model.gate import ImageFusionLayer
+from untils import get_sequence_length_from_num_faces_vector
 
 import torch
 import torch.nn as nn
@@ -69,25 +70,38 @@ class ConditionedImageEncoder(nn.Module):
     #     return result_embedding_list
 
     def forward(self, conditioned_query_embedding, image_embeddings_input):
-        scene_embedding_list = image_embeddings_input['scene_embedding_list']
-        face_embedding_list = image_embeddings_input['face_embedding_list']
+        scene_embeddings = image_embeddings_input['scene_embeddings']
+        # scene_mask = image_embeddings_input['scene_mask']
+        num_faces = image_embeddings_input['num_faces']
+        face_embeddings = image_embeddings_input['face_embeddings']
+        # face_mask = image_embeddings_input['face_mask']
 
-        # face和scene融合，这不进行位置编码。
-        sequence_length = len(scene_embedding_list)
-        image_result_embedding_list = []
-        for i in range(sequence_length):
-            scene_embedding = scene_embedding_list[i]
-            num_faces, face_embedding = face_embedding_list[i]
-            image_embedding = self.image_fusion_layer(num_faces, scene_embedding, face_embedding)
-            image_result_embedding_list.append(image_embedding)
+        # face和scene融合，这不进行位置编码。下面的是未更改的list方法。
+        # sequence_length = len(scene_embeddings)
+        # image_result_embedding_list = []
+        # for i in range(sequence_length):
+        #     scene_embedding = scene_embeddings[i]
+        #     num_faces, face_embedding = face_embeddings[i]
+        #     image_embedding = self.image_fusion_layer(num_faces, scene_embedding, face_embedding)
+        #     image_result_embedding_list.append(image_embedding)
+
+        image_embeddings = self.image_fusion_layer(num_faces, scene_embeddings, face_embeddings)
+
+        # 这里或许需要改进为矩阵计算？
+        # num_faces_list = []
+        # image_result_embedding_list = []
+        # for num_faces, face_embedding in face_embeddings:
+        #     num_faces_list.append(num_faces)
+        #     image_result_embedding_list.append(image_embedding)
+        # image_result_embedding_list = torch.cat(image_result_embedding_list, dim=0)
 
         # 矩阵化计算，加入位置编码。
-        image_embedding_sequence = torch.cat(image_result_embedding_list, dim=0)
-        image_embedding_sequence += positional_encoding(image_embedding_sequence.shape[0], image_embedding_sequence.shape[1])
-        conditioned_query_embedding = conditioned_query_embedding.expand_as(image_embedding_sequence)
+        # image_embeddings = torch.cat(image_result_embedding_list, dim=0)
+        image_embeddings += positional_encoding(image_embeddings.shape[0], image_embeddings.shape[1])
+        conditioned_query_embedding = conditioned_query_embedding.expand_as(image_embeddings)
 
         # 计算结果。
-        attention_output, _ = self.cross_attention(conditioned_query_embedding, image_embedding_sequence, image_embedding_sequence)
+        attention_output, _ = self.cross_attention(conditioned_query_embedding, image_embeddings, image_embeddings)
 
         return attention_output
 
