@@ -39,9 +39,8 @@ class FeatureModule(nn.Module):
         image&text：embedding sequence。
         audion：原始embedding。
     """
-    def __init__(self, is_need_audio=True, is_need_positional_encoding=True, ):
+    def __init__(self, is_need_positional_encoding=True, ):
         super().__init__()
-        self.is_need_audio = is_need_audio
         self.is_need_positional_encoding = is_need_positional_encoding
 
         self.learnable_query = LearnableQuery()
@@ -53,50 +52,18 @@ class FeatureModule(nn.Module):
         self.conditional_image_encoder = ConditionedImageEncoder()
         self.conditional_text_encoder = ConditionedTextEncoder()
 
-    # def forward(self, embedding_dict):
-    #     title_embedding = embedding_dict['title_embedding']
-    #     image_embedding_dict = {
-    #         'scene_embedding_list': embedding_dict['scene_embedding_list'],
-    #         'face_embedding_list': embedding_dict['face_embedding_list'],
-    #     }
-    #     text_embedding_dict = {
-    #         'text_embedding_list': embedding_dict['text_embedding_list'],
-    #     }
-    #
-    #     conditioned_query_embedding = title_embedding + self.learnable_query()
-    #     image_embedding_list = self.conditional_image_encoder(conditioned_query_embedding, image_embedding_dict)
-    #     text_embedding_list = self.conditional_text_encoder(conditioned_query_embedding, text_embedding_dict)
-    #
-    #     image_embedding_sequence = torch.cat(image_embedding_list, dim=0)
-    #     text_embedding_sequence = torch.cat(text_embedding_list, dim=0)
-    #
-    #     if self.is_need_positional_encoding:
-    #         # 如何进行了位置编码，这里的形状会发生变化。(sequence_length, embedding_dim)
-    #         # image_embedding_sequence = self.positional_encoding(image_embedding_sequence)
-    #         # text_embedding_sequence = self.positional_encoding(text_embedding_sequence)
-    #         image_embedding_sequence += self.positional_encoding(image_embedding_sequence.shape[0], image_embedding_sequence.shape[1])
-    #         text_embedding_sequence += self.positional_encoding(text_embedding_sequence.shape[0], text_embedding_sequence.shape[1])
-    #
-    #     result = {
-    #         'title_embedding': title_embedding,
-    #         # 'image_embedding_list': image_embedding_list,
-    #         # 'text_embedding_list': text_embedding_list,
-    #         'image_embedding_sequence': image_embedding_sequence,
-    #         'text_embedding_sequence': text_embedding_sequence,
-    #     }
-    #     if self.is_need_audio:
-    #         result['audio_embedding'] = embedding_dict['audio_embedding']
-    #
-    #     return result
-
     def forward(self, embedding_dict):
         title_embedding = embedding_dict['title_embedding']
         image_embedding_dict = {
-            'scene_embedding_list': embedding_dict['scene_embedding_list'],
-            'face_embedding_list': embedding_dict['face_embedding_list'],
+            'scene_embeddings': embedding_dict['scene_embeddings'],
+            # 'scene_mask': embedding_dict['scene_mask'],
+            'num_faces': embedding_dict['num_faces'],
+            'face_embeddings': embedding_dict['face_embeddings'],
+            # 'face_mask': embedding_dict['face_mask'],
         }
         text_embedding_dict = {
-            'text_embedding_list': embedding_dict['text_embedding_list'],
+            'text_embeddings': embedding_dict['text_embeddings'],
+            # 'text_mask': embedding_dict['text_mask'],
             # 'text_embedding_sequence': torch.cat(embedding_dict['text_embedding_list'], dim=0),
         }
         audio_embedding = embedding_dict['audio_embedding']
@@ -108,28 +75,12 @@ class FeatureModule(nn.Module):
         image_embedding_sequence = self.conditional_image_encoder(conditioned_query_embedding, image_embedding_dict)
         text_embedding_sequence = self.conditional_text_encoder(conditioned_query_embedding, text_embedding_dict)
 
-        # image_embedding_sequence = torch.cat(image_embedding_list, dim=0)
-        # text_embedding_sequence = torch.cat(text_embedding_list, dim=0)
-
-        # 没必要判断，这里是可能需要位置编码的。
-        # if self.is_need_positional_encoding:
-        #     # 如何进行了位置编码，这里的形状会发生变化。(sequence_length, embedding_dim)
-        #     # image_embedding_sequence = self.positional_encoding(image_embedding_sequence)
-        #     # text_embedding_sequence = self.positional_encoding(text_embedding_sequence)
-        #     image_embedding_sequence += self.positional_encoding(image_embedding_sequence.shape[0],
-        #                                                          image_embedding_sequence.shape[1])
-        #     text_embedding_sequence += self.positional_encoding(text_embedding_sequence.shape[0],
-        #                                                         text_embedding_sequence.shape[1])
-
         result = {
             'title_embedding': title_embedding,
-            # 'image_embedding_list': image_embedding_list,
-            # 'text_embedding_list': text_embedding_list,
             'image_embedding_sequence': image_embedding_sequence,
             'text_embedding_sequence': text_embedding_sequence,
+            'audio_embedding': audio_embedding,
         }
-        if self.is_need_audio:
-            result['audio_embedding'] = embedding_dict['audio_embedding']
 
         return result
 
