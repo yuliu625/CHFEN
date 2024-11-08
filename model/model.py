@@ -23,25 +23,25 @@ class CHFEN(nn.Module):
         - total_encoder是来自transformers的，所有情况都会被冻结。
         - 数据传递是通过dict，每个模块内已经写好了处理方法。
     """
-    def __init__(self, config):
+    def __init__(self, config=None):
         super().__init__()
-        self.total_encoder = TotalEncoder(encoder_config_path_str=config['model']['encoder_config_path'])
+        # self.total_encoder = TotalEncoder(encoder_config_path_str=config['model']['encoder_config_path'])
         self.feature_module = FeatureModule()
         self.decision_module = DecisionModule()
         self.classifier = EmotionClassifier()
 
     def forward(self, data):
-        with torch.no_grad():
-            out = self.total_encoder(data)
-        out = self.feature_module(out)
+        # with torch.no_grad():
+        #     out = self.total_encoder(data)
+        out = self.feature_module(data)
         out = self.decision_module(out)
         out = self.classifier(out)
         return out
 
-    def freeze_total_encoder(self):
-        """在将模型实例化之后，这个方法就需要被调用。"""
-        for param in self.total_encoder.parameters():
-            param.requires_grad = False
+    # def freeze_total_encoder(self):
+    #     """在将模型实例化之后，这个方法就需要被调用。"""
+    #     for param in self.total_encoder.parameters():
+    #         param.requires_grad = False
 
 
 if __name__ == '__main__':
