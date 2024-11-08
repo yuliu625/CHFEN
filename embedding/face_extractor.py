@@ -10,9 +10,18 @@ from omegaconf import OmegaConf
 
 
 class FaceExtractor:
-    def __init__(self):
-        """这里使用mtcnn来提取人脸。"""
-        self.detector = MTCNN(keep_all=True)  # 需要检测所有的人脸
+    """
+    人脸提取。只是个小工具。
+    返回：
+        [(face_image, face_area_ratio)]。
+        肯定需要进行处理和编码。
+    """
+    def __init__(self, device):
+        """
+        这里使用mtcnn来提取人脸。
+        会自动识别设备，但为了多做实验，指定模型至同一设备。
+        """
+        self.detector = MTCNN(keep_all=True, device=device)  # 需要检测所有的人脸
 
     def extract_face(self, np_array_image):
         pil_image = self.trans_np_array_to_image(np_array_image)
