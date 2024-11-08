@@ -27,7 +27,7 @@ class TotalEncoder(nn.Module):
         self.text_encoder = TextEncoder(encoder_config_path_str=encoder_config_path_str)
         self.captioner = Captioner(encoder_config_path_str=encoder_config_path_str)
         self.image_encoder = ImageEncoder(encoder_config_path_str=encoder_config_path_str)
-        self.face_extractor = FaceExtractor()
+        self.face_extractor = FaceExtractor('cpu')
         self.audio_encoder = AudioEncoder(encoder_config_path_str=encoder_config_path_str)
 
     def forward(self, data):
@@ -99,6 +99,10 @@ class TotalEncoder(nn.Module):
         """聚合多张脸的语义信息。返回结果是(num_faces,face_embedding)"""
         faces_with_ratios_list = self.get_faces_and_ratios_list(scene)
         num_faces = len(faces_with_ratios_list)
+
+        if num_faces == 0:
+            # 出现一张图像中没有人脸的情况。以非常小的数字代表。
+            return 0, torch.randn(1, 768) * 1e-6
 
         total_ratio = sum(face_area_ratio for _, face_area_ratio in faces_with_ratios_list)
         weighted_embeddings = []
