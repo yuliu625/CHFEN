@@ -1,3 +1,5 @@
+from untils import get_sequence_length_from_num_faces_vector
+
 import torch
 import torch.nn as nn
 
@@ -15,11 +17,27 @@ class ImageFusionLayer(nn.Module):
         super().__init__()
         self.cross_attention = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads)
 
-    def forward(self, num_faces: int, face_embedding, scene_embedding):
-        query = torch.full_like(face_embedding, fill_value=num_faces)
-        key = torch.cat([face_embedding, scene_embedding], dim=0)
-        value = key
-        attention_output, attention_output_weights = self.cross_attention(query, key, value)
+    def forward(self, num_faces, face_embeddings, scene_embeddings):
+        # if num_faces == 0:
+        #     # 对于没有人脸的情况，那就是场景。
+        #     return scene_embedding
+        # # 对于有人脸的情况，正常进行融合。
+        # query = torch.full_like(face_embedding, fill_value=num_faces)
+        # key = torch.cat([face_embedding, scene_embedding], dim=0)
+        # value = key
+        # attention_output, attention_output_weights = self.cross_attention(query, key, value)
+
+        # 根据原本的序列长度，还原原本的sequence
+        sequence_length = get_sequence_length_from_num_faces_vector(num_faces)
+        num_faces = num_faces[:sequence_length]
+        face_embeddings = face_embeddings[:sequence_length]
+        scene_embeddings = scene_embeddings[:sequence_length]
+        # 先替换0即没有人的情况，然后扩展至查询方式。
+        num_faces = torch.where(num_faces == 0, torch.tensor( 1e-6 ), num_faces)
+        num_faces = num_faces.unsqueeze(1).expand_as(scene_embeddings)
+
+        attention_output, _ = self.cross_attention(num_faces, face_embeddings, scene_embeddings)
+
         return attention_output
 
 
