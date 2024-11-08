@@ -7,6 +7,13 @@ from omegaconf import OmegaConf
 
 
 class AudioEncoder:
+    """
+    音频部分的特征编码器。
+    输入：
+        使用encode方法，需要元组(waveform, sample_rate)。
+    返回：
+        一个代表音频整体的embedding，shape为(1, 768)。
+    """
     def __init__(self, model='wav2vec2', encoder_config_path_str='../configs/encoder.yaml'):
         # 导入配置。
         self.config = OmegaConf.load(encoder_config_path_str)
