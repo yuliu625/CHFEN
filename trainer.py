@@ -1,4 +1,4 @@
-from dataset import OriginalMultimodalDataset
+from dataset import OriginalMultimodalDataset, MultimodalDataset
 from model import CHFEN
 from untils import load_checkpoint, save_checkpoint
 
@@ -31,22 +31,21 @@ def set_wandb(config):
 def init_model(config):
     # 实例化并导入模型模型。
     model = CHFEN(config)
-
     # 冻结参数，这里冻结特征提取编码器的参数。
-    for param in model.total_encoder.parameters():
-        param.requires_grad = False
+    # for param in model.total_encoder.parameters():
+    #     param.requires_grad = False
 
     return model
 
 
 def get_dataloader(train_path_config_path_str, val_path_config_path_str, config=None):
     train_dataloader = DataLoader(
-        dataset=OriginalMultimodalDataset(path_config_path_str=train_path_config_path_str),
+        dataset=MultimodalDataset(path_config_path_str=train_path_config_path_str),
         batch_size=config['dataloader']['train']['batch_size'],
         shuffle=True,
     )
     val_dataloader = DataLoader(
-        dataset=OriginalMultimodalDataset(path_config_path_str=val_path_config_path_str),
+        dataset=MultimodalDataset(path_config_path_str=val_path_config_path_str),
         batch_size=config['dataloader']['val']['batch_size'],
         shuffle=False,
     )
@@ -121,7 +120,7 @@ def train(config):
     # 训练相关
     model = init_model(config)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(config.model.parameters(), lr=config['train']['learning_rate'])
+    optimizer = optim.AdamW(model.parameters(), lr=config['train']['learning_rate'])
     # 如果需要断点续训
     if config['is_from_checkpoint']:
         model, optimizer = load_checkpoint(config['checkpoint']['path_to_load'], model, optimizer, )
