@@ -30,7 +30,7 @@ class DecisionModule(nn.Module):
         self.audio_type_encoding = TypeEncoding()
 
         # self-attention提取特征。
-        self.self_attention_layer = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads)
+        self.self_attention_layer = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
         # self.linear_layer = nn.Linear(in_features=embedding_dim, out_features=embedding_dim)
         self.ffn_layer = nn.Sequential(
             nn.Linear(in_features=embedding_dim, out_features=embedding_dim),
@@ -39,7 +39,7 @@ class DecisionModule(nn.Module):
 
         # 注意力池化
         self.learnable_pooling_query = nn.Parameter(torch.randn(1, embedding_dim))
-        self.attention_pooling_layer = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads)
+        self.attention_pooling_layer = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
 
     def forward(self, embedding_dict):
         # 这是上一次传入的的embedding。
@@ -54,12 +54,20 @@ class DecisionModule(nn.Module):
         text_embedding += self.text_type_encoding().expand_as(text_embedding)
         audio_embedding += self.audio_type_encoding().expand_as(audio_embedding)
 
-        embeddings = torch.cat((title_embedding, image_embedding, text_embedding, audio_embedding), dim=0)
+        embeddings = torch.cat((title_embedding, image_embedding, text_embedding, audio_embedding), dim=1)
+        # print(embeddings.shape)  # torch.Size([1, 18, 768])
 
         # 前向传播算法部分
-        out, _ = self.self_attention_layer(embeddings, embeddings, embeddings)
-        out = self.ffn_layer(out)
-        out, _ = self.attention_pooling_layer(self.learnable_pooling_query, out, out)
+        out, _ = self.self_attention_layer(embeddings, embeddings, embeddings)  # torch.Size([1, 18, 768])
+        # print(out.shape)
+        out = self.ffn_layer(out)  # torch.Size([1, 18, 768])
+        # print(out.shape)
+        # 在执行查询前，需要扩展至batch的shape，即(batch_size, 1, embedding_dim)
+        query = self.learnable_pooling_query.unsqueeze(0).expand(out.shape[0], -1, -1)  # torch.Size([2, 1, 768])
+        # print(query.shape)
+        out, _ = self.attention_pooling_layer(query, out, out)  # torch.Size([2, 1, 768])
+        # print(out.shape)
+        out = out.squeeze(1)
         return out
 
 
