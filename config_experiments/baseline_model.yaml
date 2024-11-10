@@ -1,5 +1,5 @@
 is_from_checkpoint: False
-device: 'cuda: 0'
+device: 'cpu'
 
 wandb:
   init:
