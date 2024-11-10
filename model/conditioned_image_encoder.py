@@ -1,5 +1,5 @@
 from model.projection_layer import ProjectionLayer
-from model.positional_encoding import positional_encoding
+from model.positional_encoding import positional_encoding, PositionalEncoding
 from model.gate import ImageFusionLayer
 from untils import get_sequence_length_from_num_faces_vector
 
@@ -25,49 +25,11 @@ class ConditionedImageEncoder(nn.Module):
         super().__init__()
         self.image_fusion_layer = ImageFusionLayer()
 
-        self.positional_encoding = positional_encoding
+        # self.positional_encoding = positional_encoding
+        self.positional_encoding = PositionalEncoding(embedding_dim)
 
         # 这个是conditioned query的实现。
-        self.cross_attention = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads)
-
-    # def forward(self, conditioned_query_embedding, image_embeddings_input):
-    #     scene_embedding_list = image_embeddings_input['scene_embedding_list']
-    #     face_embedding_list = image_embeddings_input['face_embedding_list']
-    #
-    #     sequence_length = len(scene_embedding_list)
-    #
-    #     result_embedding_list = []
-    #     for i in range(sequence_length):
-    #         scene_embedding = scene_embedding_list[i]
-    #         num_faces, face_embedding = face_embedding_list[i]
-    #         image_embedding = self.image_fusion_layer(num_faces, scene_embedding, face_embedding)
-    #
-    #         attention_output, _ = self.cross_attention(conditioned_query_embedding, image_embedding, image_embedding)
-    #         result_embedding_list.append(attention_output)
-    #
-    #     return result_embedding_list
-
-    # def forward(self, conditioned_query_embedding, image_embeddings_input):
-    #     scene_embedding_list = image_embeddings_input['scene_embedding_list']
-    #     face_embedding_list = image_embeddings_input['face_embedding_list']
-    #
-    #     num_faces_list = [face_embedding[0] for face_embedding in face_embedding_list]
-    #     face_embedding_list_ = [face_embedding[1] for face_embedding in face_embedding_list]
-    #
-    #     scene_embedding_sequence = torch.cat(scene_embedding_list, dim=1)
-    #     face_embedding_sequence = torch.cat(face_embedding_list_, dim=0)
-    #
-    #
-    #     result_embedding_list = []
-    #     for i in range(sequence_length):
-    #         scene_embedding = scene_embedding_list[i]
-    #         num_faces, face_embedding = face_embedding_list[i]
-    #         image_embedding = self.image_fusion_layer(num_faces, scene_embedding, face_embedding)
-    #
-    #         attention_output, _ = self.cross_attention(conditioned_query_embedding, image_embedding, image_embedding)
-    #         result_embedding_list.append(attention_output)
-    #
-    #     return result_embedding_list
+        self.cross_attention = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
 
     def forward(self, conditioned_query_embedding, image_embeddings_input):
         scene_embeddings = image_embeddings_input['scene_embeddings']
@@ -86,6 +48,7 @@ class ConditionedImageEncoder(nn.Module):
         #     image_result_embedding_list.append(image_embedding)
 
         image_embeddings = self.image_fusion_layer(num_faces, scene_embeddings, face_embeddings)
+        # print(image_embeddings.shape)  # torch.Size([2, 19, 768])
 
         # 这里或许需要改进为矩阵计算？
         # num_faces_list = []
@@ -97,7 +60,8 @@ class ConditionedImageEncoder(nn.Module):
 
         # 矩阵化计算，加入位置编码。
         # image_embeddings = torch.cat(image_result_embedding_list, dim=0)
-        image_embeddings += positional_encoding(image_embeddings.shape[0], image_embeddings.shape[1])
+        # image_embeddings += positional_encoding(image_embeddings.shape[0], image_embeddings.shape[1])
+        image_embeddings = self.positional_encoding(image_embeddings)
         conditioned_query_embedding = conditioned_query_embedding.expand_as(image_embeddings)
 
         # 计算结果。
