@@ -13,7 +13,7 @@ if __name__ == '__main__':
     dataloader = DataLoader(dataset, batch_size=2, shuffle=False, collate_fn=collate_fn)
     chfen = CHFEN(config)
     for batch in dataloader:
-        out = chfen(dataset[0])
+        out = chfen(batch)
         # print(out.shape)
         print(out)
         break
@@ -23,4 +23,12 @@ if __name__ == '__main__':
 torch.Size([1, 8])
 tensor([[-0.0299,  0.0336, -0.0507,  0.0032, -0.0347,  0.0621, -0.0345, -0.0479]],
        grad_fn=<AddmmBackward0>)
+"""
+
+"""
+tensor([[[ 0.0033,  0.0072,  0.0172,  0.0045, -0.0367,  0.0345,  0.0116,
+          -0.0516]],
+
+        [[ 0.0055,  0.0089,  0.0152,  0.0084, -0.0362,  0.0344,  0.0119,
+          -0.0493]]], grad_fn=<ViewBackward0>)
 """
