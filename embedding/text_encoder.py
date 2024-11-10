@@ -15,14 +15,18 @@ class TextEncoder:
     def __init__(self, model='xlm-roberta', encoder_config_path_str='../configs/encoder.yaml'):
         # 导入配置。
         self.config = OmegaConf.load(encoder_config_path_str)
+        self.device_str = self.config['device']
+        self.device = torch.device(self.device_str)
 
         # encoder_path 并选择模型。
         self.encoder_path = Path(self.config['text'][model]['path'])
         self.tokenizer = XLMRobertaTokenizer.from_pretrained(self.encoder_path)
-        self.model = XLMRobertaModel.from_pretrained(self.encoder_path)
+        self.model = XLMRobertaModel.from_pretrained(self.encoder_path).to(self.device)
 
     def encode(self, text):
         inputs = self.tokenizer(text, return_tensors='pt', max_length=128, padding='max_length', truncation=True)
+        # inputs = inputs.to(self.device)
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
         with torch.no_grad():
             outputs = self.model(**inputs)
