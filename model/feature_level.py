@@ -43,11 +43,12 @@ class FeatureModule(nn.Module):
         super().__init__()
         self.is_need_positional_encoding = is_need_positional_encoding
 
-        self.learnable_query = LearnableQuery()
+        # self.learnable_query = LearnableQuery()
+        self.learnable_query = nn.Parameter(torch.randn(1, 768))
 
         # self.positional_encoding = ListPositionalEncoding(d_model=768)  # 处理效率太低了
         # self.positional_encoding = PositionalEncoding(d_model=768)  # 方法不对，shape改变了
-        self.positional_encoding = positional_encoding
+        self.positional_encoding = PositionalEncoding()
 
         self.conditional_image_encoder = ConditionedImageEncoder()
         self.conditional_text_encoder = ConditionedTextEncoder()
@@ -64,12 +65,11 @@ class FeatureModule(nn.Module):
         text_embedding_dict = {
             'text_embeddings': embedding_dict['text_embeddings'],
             # 'text_mask': embedding_dict['text_mask'],
-            # 'text_embedding_sequence': torch.cat(embedding_dict['text_embedding_list'], dim=0),
         }
         audio_embedding = embedding_dict['audio_embedding']
 
         # 这里的全局query或许需要将标题和音频都加上。
-        conditioned_query_embedding = self.learnable_query() + title_embedding + audio_embedding
+        conditioned_query_embedding = self.learnable_query + title_embedding + audio_embedding
 
         # 执行条件查询。
         image_embedding_sequence = self.conditional_image_encoder(conditioned_query_embedding, image_embedding_dict)
