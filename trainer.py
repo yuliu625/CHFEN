@@ -1,6 +1,7 @@
 from dataset import OriginalMultimodalDataset, MultimodalDataset
+from dataset import collate_fn
 from model import CHFEN
-from untils import load_checkpoint, save_checkpoint
+from untils import load_checkpoint, save_checkpoint, move_batch_to_device
 
 import torch
 import torch.nn as nn
@@ -34,20 +35,31 @@ def init_model(config):
     # 冻结参数，这里冻结特征提取编码器的参数。
     # for param in model.total_encoder.parameters():
     #     param.requires_grad = False
+    device_str = config['device']
+    device = torch.device(device_str)
+    model = model.to(device)
 
     return model
 
 
 def get_dataloader(train_path_config_path_str, val_path_config_path_str, config=None):
     train_dataloader = DataLoader(
-        dataset=MultimodalDataset(path_config_path_str=train_path_config_path_str),
+        dataset=MultimodalDataset(
+            path_config_path_str=train_path_config_path_str,
+            encoder_config_path_str=config['model']['encoder_config_path']
+        ),
         batch_size=config['dataloader']['train']['batch_size'],
         shuffle=True,
+        collate_fn=collate_fn,
     )
     val_dataloader = DataLoader(
-        dataset=MultimodalDataset(path_config_path_str=val_path_config_path_str),
+        dataset=MultimodalDataset(
+            path_config_path_str=val_path_config_path_str,
+            encoder_config_path_str=config['model']['encoder_config_path']
+        ),
         batch_size=config['dataloader']['val']['batch_size'],
         shuffle=False,
+        collate_fn=collate_fn,
     )
     return train_dataloader, val_dataloader
 
@@ -62,7 +74,7 @@ def train_one_epoch(model, train_dataloader, loss_fn, optimizer, device, config=
         optimizer.zero_grad()
 
         # 移动数据。
-        data = data.to(device)
+        data = move_batch_to_device(data, device)
         labels = data['emotion'].to(device)
 
         # 前向传播
@@ -91,7 +103,7 @@ def evaluate_model(model, val_dataloader, loss_fn, device, config=None):
     with torch.no_grad():
         for data in val_dataloader:
             # 移动数据。
-            data = data.to(device)
+            data = move_batch_to_device(data, device)
             labels = data['emotion'].to(device)
 
             # 推理
@@ -106,7 +118,7 @@ def evaluate_model(model, val_dataloader, loss_fn, device, config=None):
             all_labels.extend(labels.cpu().numpy())
     avg_val_loss = val_loss / len(val_dataloader)
     val_accuracy = accuracy_score(all_labels, all_predictions)
-    print(f"val_loss: {avg_val_loss}", f"val_accuracy: {avg_val_loss}")
+    print(f"val_loss: {avg_val_loss}", f"val_accuracy: {val_accuracy}")
     wandb.log({'val_loss': avg_val_loss, 'val_accuracy': val_accuracy})
 
 
