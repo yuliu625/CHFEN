@@ -25,6 +25,7 @@ class MultimodalDataset(Dataset):
         self.path_config = OmegaConf.load(path_config_path_str)
         self.encoder_config = OmegaConf.load(encoder_config_path_str)
         self.device_str = self.encoder_config['device']
+        self.device = torch.device(self.device_str)
 
         # 加载视频、字幕、音频的路径。
         self.base_dir = Path(self.path_config['datasets']['base_dir'])
@@ -39,7 +40,7 @@ class MultimodalDataset(Dataset):
         self.text_encoder = TextEncoder(encoder_config_path_str=encoder_config_path_str)
         self.captioner = Captioner(encoder_config_path_str=encoder_config_path_str)
         self.image_encoder = ImageEncoder(encoder_config_path_str=encoder_config_path_str)
-        self.face_extractor = FaceExtractor(device=self.device_str)
+        self.face_extractor = FaceExtractor(device_str=self.device_str)
         self.audio_encoder = AudioEncoder(encoder_config_path_str=encoder_config_path_str)
 
     def __len__(self):
@@ -104,7 +105,7 @@ class MultimodalDataset(Dataset):
 
     def get_face_embeddings(self, scenes):
         face_embedding_list = [self.get_face_embedding(scene) for scene in scenes]
-        num_faces = torch.tensor([item[0] for item in face_embedding_list])
+        num_faces = torch.tensor([item[0] for item in face_embedding_list]).to(self.device)
         face_embeddings = [item[1] for item in face_embedding_list]
         return num_faces, torch.cat(face_embeddings, dim=0)
 
