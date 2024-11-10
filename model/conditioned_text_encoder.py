@@ -1,5 +1,5 @@
 from model.projection_layer import ProjectionLayer
-from model.positional_encoding import positional_encoding
+from model.positional_encoding import positional_encoding, PositionalEncoding
 
 import torch
 import torch.nn as nn
@@ -20,9 +20,10 @@ class ConditionedTextEncoder(nn.Module):
         super().__init__()
 
         # 这个是conditioned query的实现。
-        self.cross_attention = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads)
+        self.cross_attention = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
 
-        self.positional_encoding = positional_encoding
+        # self.positional_encoding = positional_encoding
+        self.positional_encoding = PositionalEncoding(embedding_dim)
 
     def forward(self, conditioned_query_embedding, text_embeddings_input):
         text_embeddings = text_embeddings_input['text_embeddings']
@@ -38,7 +39,8 @@ class ConditionedTextEncoder(nn.Module):
 
         # 矩阵化处理方法, 加入位置编码。。
         # text_embedding_sequence = torch.cat(text_embedding_list, dim=0)
-        text_embeddings += self.positional_encoding(text_embeddings.shape[0], text_embeddings.shape[1])
+        # text_embeddings += self.positional_encoding(text_embeddings.shape[0], text_embeddings.shape[1])
+        text_embeddings = self.positional_encoding(text_embeddings)
         conditioned_query_embedding = conditioned_query_embedding.expand_as(text_embeddings)
 
         # 计算结果。
