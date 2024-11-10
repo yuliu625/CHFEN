@@ -15,9 +15,10 @@ class ImageFusionLayer(nn.Module):
     """
     def __init__(self, embedding_dim=768, num_heads=8):
         super().__init__()
-        self.cross_attention = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads)
+        self.cross_attention = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
 
     def forward(self, num_faces, face_embeddings, scene_embeddings):
+        # 下面的是不用矩阵，纯for loop。
         # if num_faces == 0:
         #     # 对于没有人脸的情况，那就是场景。
         #     return scene_embedding
@@ -27,16 +28,32 @@ class ImageFusionLayer(nn.Module):
         # value = key
         # attention_output, attention_output_weights = self.cross_attention(query, key, value)
 
-        # 根据原本的序列长度，还原原本的sequence
-        sequence_length = get_sequence_length_from_num_faces_vector(num_faces)
-        num_faces = num_faces[:sequence_length]
-        face_embeddings = face_embeddings[:sequence_length]
-        scene_embeddings = scene_embeddings[:sequence_length]
-        # 先替换0即没有人的情况，然后扩展至查询方式。
-        num_faces = torch.where(num_faces == 0, torch.tensor( 1e-6 ), num_faces)
-        num_faces = num_faces.unsqueeze(1).expand_as(scene_embeddings)
+        # 以下这段不要删除，这是单条数据的情况下的正确处理，是可以正常运行的。
+        # # 根据原本的序列长度，还原原本的sequence
+        # sequence_length = get_sequence_length_from_num_faces_vector(num_faces)
+        # num_faces = num_faces[:sequence_length]
+        # face_embeddings = face_embeddings[:sequence_length]
+        # scene_embeddings = scene_embeddings[:sequence_length]
+        # # 先替换0即没有人的情况，然后扩展至查询方式。
+        # num_faces = torch.where(num_faces == 0, torch.tensor( 1e-6 ), num_faces)
+        # num_faces = num_faces.unsqueeze(2).expand_as(scene_embeddings)
+
+        # 因为batch进行的改造。不去计算序列长度，而使用掩码。
+        num_faces = torch.where(num_faces == 0, torch.tensor(1e-6, device=scene_embeddings.device), num_faces)
+        num_faces = num_faces.unsqueeze(2).expand_as(scene_embeddings)
+        num_faces = torch.where(num_faces == -1, torch.tensor(0, device=scene_embeddings.device), num_faces)
+
+        # print(type(num_faces))  # <class 'torch.Tensor'>
+        # print(num_faces.shape)  # torch.Size([2, 19, 768])
+        # num_faces = torch.where(num_faces == -1, torch.tensor(0, device=num_faces.device), num_faces)
+
+        # 还是不用掩码了，好麻烦。
+        # face_mask = (num_faces != -1).float()  # [batch_size, seq_len, embedding_dim]
+        # face_mask = face_mask.max(dim=2).values  # [batch_size, seq_len], max over embedding_dim
 
         attention_output, _ = self.cross_attention(num_faces, face_embeddings, scene_embeddings)
+        # print(type(attention_output))  # <class 'torch.Tensor'>
+        # print(attention_output.shape)  # torch.Size([2, 19, 768])
 
         return attention_output
 
