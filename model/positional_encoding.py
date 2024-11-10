@@ -39,9 +39,9 @@ class ListPositionalEncoding(torch.nn.Module):
         return x
 
 
-class PositionalEncoding(torch.nn.Module):
-    def __init__(self, d_model, max_len=5000):
-        super(PositionalEncoding, self).__init__()
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model=768, max_len=5000):
+        super().__init__()
         # Create a matrix of shape (max_len, d_model)
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
@@ -58,6 +58,20 @@ class PositionalEncoding(torch.nn.Module):
         # Add position encoding to input tensor
         x = x + self.pe[:x.size(0), :]
         return x
+
+        # # 获取 x 的形状，x 的形状是 [batch_size, sequence_length, embedding_dim]
+        # batch_size, seq_len, _ = x.size()
+        # print(batch_size, seq_len)  # 2 19
+        #
+        # # 截取合适长度的 position encoding
+        # pe = self.pe[:seq_len, :].unsqueeze(0)  # 变为 [1, seq_len, embedding_dim]
+        # print(pe.shape)  # torch.Size([1, 19, 1, 768])
+        #
+        # # 如果需要，扩展到 batch_size
+        # pe = pe.expand(batch_size, -1, -1)  # 变为 [batch_size, seq_len, embedding_dim]
+        # print(pe.shape)
+        # # 加上位置编码
+        # return x + pe
 
 
 if __name__ == '__main__':
