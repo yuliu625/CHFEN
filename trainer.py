@@ -7,9 +7,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
 
 import wandb
+import os; os.environ["WANDB_MODE"]="offline"
 
 from omegaconf import OmegaConf
 from pathlib import Path
@@ -24,8 +25,8 @@ def set_wandb(config):
     wandb.config = {
         'learning_rate': config['wandb']['config']['learning_rate'],
         'batch_size': config['wandb']['config']['batch_size'],
-        'epochs': config['wandb']['config']['epochs'],
-        'weight_decay': config['wandb']['config']['weight_decay'],
+        'epoch': config['wandb']['config']['epoch'],
+        # 'weight_decay': config['wandb']['config']['weight_decay'],
     }
 
 
@@ -88,8 +89,8 @@ def train_one_epoch(model, train_dataloader, loss_fn, optimizer, device, config=
         optimizer.step()
     # 记录
     train_avg_loss = total_loss / len(train_dataloader)
-    print(f"train_loss: {train_avg_loss}")
-    wandb.log({'train_loss': train_avg_loss})
+    print(f"train_loss: {train_avg_loss}", flush=True)
+    # wandb.log({'train_loss': train_avg_loss})
 
 
 def evaluate_model(model, val_dataloader, loss_fn, device, config=None):
@@ -118,8 +119,9 @@ def evaluate_model(model, val_dataloader, loss_fn, device, config=None):
             all_labels.extend(labels.cpu().numpy())
     avg_val_loss = val_loss / len(val_dataloader)
     val_accuracy = accuracy_score(all_labels, all_predictions)
-    print(f"val_loss: {avg_val_loss}", f"val_accuracy: {val_accuracy}")
-    wandb.log({'val_loss': avg_val_loss, 'val_accuracy': val_accuracy})
+    val_f1 = f1_score(all_labels, all_predictions, average='weighted')
+    print(f"val_loss: {avg_val_loss}", f"val_accuracy: {val_accuracy}", f"val_F1: {val_f1}", flush=True)
+    # wandb.log({'val_loss': avg_val_loss, 'val_accuracy': val_accuracy, 'val_F1': val_f1})
 
 
 def train(config):
@@ -139,6 +141,7 @@ def train(config):
 
     # 训练主体。
     for epoch in range(config['train']['epoch_start'], config['train']['epoch_end'] + 1):
+        print(f"Epoch {epoch}", flush=True)
         train_one_epoch(model, train_dataloader, loss_fn, optimizer, device, config)
         evaluate_model(model, val_dataloader, loss_fn, device, config)
         if epoch % 5 == 0:
@@ -148,5 +151,5 @@ def train(config):
 
 if __name__ == '__main__':
     config = OmegaConf.load('./config.yaml')
-    set_wandb(config)
+    # set_wandb(config)
     train(config)
