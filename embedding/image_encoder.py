@@ -1,4 +1,5 @@
 import torch
+from torchvision import transforms
 
 from transformers import ViTModel, ViTFeatureExtractor
 
@@ -12,15 +13,20 @@ class ImageEncoder:
     def __init__(self, model='vit', encoder_config_path_str='../configs/encoder.yaml'):
         # 导入配置。
         self.config = OmegaConf.load(encoder_config_path_str)
+        self.device_str = self.config['device']
+        self.device = torch.device(self.device_str)
 
         # encoder_path 并选择模型。
         self.encoder_path = Path(self.config['image'][model]['path'])
         self.feature_extractor = ViTFeatureExtractor.from_pretrained(self.encoder_path)
-        self.model = ViTModel.from_pretrained(self.encoder_path)
+        self.model = ViTModel.from_pretrained(self.encoder_path).to(self.device)
 
     def encode(self, image):
+        # image = torch.from_numpy(image).to(self.device)  # 这里已经在mtcnn中转换成tensor了，不需要再转换。
         # 使用特征提取器处理图片
         inputs = self.feature_extractor(images=image, return_tensors="pt")
+        # inputs = inputs.to(self.device)
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
         # 将图片输入模型并获取输出
         with torch.no_grad():
