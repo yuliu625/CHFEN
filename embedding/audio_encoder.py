@@ -17,13 +17,15 @@ class AudioEncoder:
     def __init__(self, model='wav2vec2', encoder_config_path_str='../configs/encoder.yaml'):
         # 导入配置。
         self.config = OmegaConf.load(encoder_config_path_str)
+        self.device_str = self.config['device']
+        self.device = torch.device(self.device_str)
 
         # encoder_path 并选择模型。
         self.encoder_path = Path(self.config['audio'][model]['path'])
 
         # 加载 Wav2Vec2 预处理器和模型
         self.processor = Wav2Vec2Processor.from_pretrained(self.encoder_path)
-        self.model = Wav2Vec2Model.from_pretrained(self.encoder_path)
+        self.model = Wav2Vec2Model.from_pretrained(self.encoder_path).to(self.device)
 
     # 读取音频文件（假设为 .wav 格式）
     # def load_audio(file_path):
@@ -43,6 +45,7 @@ class AudioEncoder:
 
         # 预处理音频数据
         inputs = self.processor(waveform.squeeze().numpy(), sampling_rate=16000, return_tensors="pt", padding=True)
+        inputs = inputs.to(self.device)
 
         # 通过 Wav2Vec2 模型生成embedding
         with torch.no_grad():
