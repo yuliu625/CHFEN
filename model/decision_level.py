@@ -30,9 +30,14 @@ class DecisionModule(nn.Module):
         self.audio_type_encoding = TypeEncoding()
 
         # self-attention提取特征。
-        self.self_attention_layer = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
+        self.self_attention_layer_1 = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
         # self.linear_layer = nn.Linear(in_features=embedding_dim, out_features=embedding_dim)
-        self.ffn_layer = nn.Sequential(
+        self.ffn_layer_1 = nn.Sequential(
+            nn.Linear(in_features=embedding_dim, out_features=embedding_dim),
+            nn.ReLU(),
+        )
+        self.self_attention_layer_2 = nn.MultiheadAttention(embed_dim=embedding_dim, num_heads=num_heads, batch_first=True)
+        self.ffn_layer_2 = nn.Sequential(
             nn.Linear(in_features=embedding_dim, out_features=embedding_dim),
             nn.ReLU(),
         )
@@ -58,10 +63,13 @@ class DecisionModule(nn.Module):
         # print(embeddings.shape)  # torch.Size([1, 18, 768])
 
         # 前向传播算法部分
-        out, _ = self.self_attention_layer(embeddings, embeddings, embeddings)  # torch.Size([1, 18, 768])
+        out, _ = self.self_attention_layer_1(embeddings, embeddings, embeddings)  # torch.Size([1, 18, 768])
         # print(out.shape)
-        out = self.ffn_layer(out)  # torch.Size([1, 18, 768])
+        out = self.ffn_layer_1(out)  # torch.Size([1, 18, 768])
         # print(out.shape)
+        out, _ = self.self_attention_layer_2(out, out, out)
+        out = self.ffn_layer_2(out)
+
         # 在执行查询前，需要扩展至batch的shape，即(batch_size, 1, embedding_dim)
         query = self.learnable_pooling_query.unsqueeze(0).expand(out.shape[0], -1, -1)  # torch.Size([2, 1, 768])
         # print(query.shape)
