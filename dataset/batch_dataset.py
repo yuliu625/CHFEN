@@ -106,7 +106,7 @@ class MultimodalDataset(Dataset):
     def get_face_embeddings(self, scenes):
         face_embedding_list = [self.get_face_embedding(scene) for scene in scenes]
         num_faces = torch.tensor([item[0] for item in face_embedding_list]).to(self.device)
-        face_embeddings = [item[1] for item in face_embedding_list]
+        face_embeddings = [item[1].to(self.device) for item in face_embedding_list]
         return num_faces, torch.cat(face_embeddings, dim=0)
 
     def get_text_embeddings(self, scenes, subtitles):
