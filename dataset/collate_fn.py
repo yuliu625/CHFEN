@@ -29,26 +29,66 @@ def collate_fn(batch):
     face_embeddings_batch_list = [data['face_embeddings'] for data in batch]
     text_embeddings_batch_list = [data['text_embeddings'] for data in batch]
 
-    num_faces = torch.cat([pad_vector(num_faces) for num_faces in num_faces_batch_list])
+    # max_length = max([len(num_faces) for num_faces in num_faces_batch_list])
+    # num_faces = [pad_vector(num_faces, max_length=32) for num_faces in num_faces_batch_list]
+
+    padded_num_faces = pad_sequence(num_faces_batch_list, batch_first=True, padding_value=-1)
     padded_scene_embeddings = pad_sequence(scene_embeddings_batch_list, batch_first=True)
-    scene_mask = padded_scene_embeddings != 0
+    # padded_scene_embeddings = pad_sequence_to_max_length(scene_embeddings_batch_list)
+    # scene_mask = padded_scene_embeddings != 0
     padded_face_embeddings = pad_sequence(face_embeddings_batch_list, batch_first=True)
-    face_mask = padded_face_embeddings != 0
+    # padded_face_embeddings = pad_sequence_to_max_length(face_embeddings_batch_list)
+    # face_mask = padded_face_embeddings != 0
     padded_text_embeddings = pad_sequence(text_embeddings_batch_list, batch_first=True)
-    text_mask = padded_text_embeddings != 0
+    # padded_text_embeddings = pad_sequence_to_max_length(text_embeddings_batch_list)
+    # text_mask = padded_text_embeddings != 0
 
     return {
-        'emotion': emotion_embedding_batch_list,
-        'title_embedding': torch.cat(title_embedding_batch_list),
-        'audio_embedding': torch.cat(audio_embedding_batch_list),
-        'num_faces': num_faces,
-        'scene_embeddings': scene_embeddings_batch_list,
-        'scene_mask': scene_mask,
-        'face_embeddings': face_embeddings_batch_list,
-        'face_mask': face_mask,
-        'text_embeddings': text_embeddings_batch_list,
-        'text_mask': text_mask,
+        'emotion': torch.stack(emotion_embedding_batch_list),
+        'title_embedding': torch.stack(title_embedding_batch_list),
+        'audio_embedding': torch.stack(audio_embedding_batch_list),
+        # 'num_faces': torch.stack(num_faces),
+        'num_faces': padded_num_faces,
+        'scene_embeddings': padded_scene_embeddings,
+        # 'scene_mask': scene_mask,
+        'face_embeddings': padded_face_embeddings,
+        # 'face_mask': face_mask,
+        'text_embeddings': padded_text_embeddings,
+        # 'text_mask': text_mask,
     }
+
+
+def pad_sequence_to_max_length(sequence_list, max_length=32):
+    """
+    将一个 list 中的每个张量 pad 至指定的最大长度，支持任意维度的张量填充。
+
+    参数：
+    - sequence_list: 一个包含变长 tensor 的 list
+    - max_length: 填充后的目标长度
+
+    返回：
+    - padded_sequences: 一个张量，包含填充后的序列
+    """
+    padded_sequences = []
+
+    for item in sequence_list:
+        # 获取当前序列的形状
+        seq_length = item.size(0)
+
+        # 计算需要填充的长度
+        padding_size = max_length - seq_length
+
+        if padding_size > 0:
+            # 对于每个维度进行填充（只在序列的第一个维度填充）
+            padded_item = F.pad(item, (0, padding_size), value=0)
+        else:
+            # 如果长度已经大于或等于 max_length，则截断
+            padded_item = item[:max_length]
+
+        padded_sequences.append(padded_item)
+
+    # 返回一个堆叠的张量
+    return torch.stack(padded_sequences)
 
 
 def pad_vector(tensor, max_length=32):
