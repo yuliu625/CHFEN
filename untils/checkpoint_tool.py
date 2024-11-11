@@ -16,7 +16,7 @@ def save_checkpoint(path_to_save, model, optimizer, scheduler=None):
     torch.save({
         'model': model.state_dict(),
         'optimizer': optimizer.state_dict(),
-        'scheduler': scheduler.state_dict(),
+        # 'scheduler': scheduler.state_dict(),
     }, file_path)
 
 
