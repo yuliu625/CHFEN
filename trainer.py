@@ -144,9 +144,9 @@ def train(config):
         print(f"Epoch {epoch}", flush=True)
         train_one_epoch(model, train_dataloader, loss_fn, optimizer, device, config)
         evaluate_model(model, val_dataloader, loss_fn, device, config)
-        if epoch % 5 == 0:
-            path_to_save = f"{config['checkpoint']['dir_to_save']}/{config['wandb']['init']['name']}_{epoch}.pt"
-            save_checkpoint(path_to_save, model, optimizer, )
+        # if epoch % 5 == 0:
+        path_to_save = f"{config['checkpoint']['dir_to_save']}/{config['wandb']['init']['name']}/{config['wandb']['init']['name']}_{epoch}.pt"
+        save_checkpoint(path_to_save, model, optimizer, )
 
 
 if __name__ == '__main__':
