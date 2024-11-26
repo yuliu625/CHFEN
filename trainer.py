@@ -1,7 +1,7 @@
 from dataset import OriginalMultimodalDataset, MultimodalDataset
 from dataset import collate_fn
 from model import CHFEN
-from untils import load_checkpoint, save_checkpoint, move_batch_to_device
+from utils import load_checkpoint, save_checkpoint, move_batch_to_device
 
 import torch
 import torch.nn as nn

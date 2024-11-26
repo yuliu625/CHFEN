@@ -1,4 +1,4 @@
-from untils import get_sequence_length_from_num_faces_vector
+from utils import get_sequence_length_from_num_faces_vector
 
 import torch
 import torch.nn as nn
