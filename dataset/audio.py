@@ -1,3 +1,9 @@
+"""
+加载音频文件的方法。
+
+简单的，使用torchaudio来处理。
+"""
+
 import torch
 import torchaudio
 
@@ -7,10 +13,12 @@ from pathlib import Path
 
 class Audio:
     """
-    指定音频的id，
-    将最终返回waveform和sample_rate，
-    sample_rate会根据模型不同更改采样率，
-    waveform为tensor会进行后续处理。
+    Args:
+        - video_id: 指定音频的id，
+        - config: 音频相关配置，主要为路径。
+    Returns:
+        - sample_rate: 采样率，会根据模型不同进行更改，
+        - waveform: tensor，会进行后续处理。
     此处的数据集的音频都是多通道的，会进行处理再输入audio_encoder。
     """
     def __init__(self, video_id, path_config_path_str='../configs/path.yaml'):
