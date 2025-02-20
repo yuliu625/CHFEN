@@ -12,10 +12,13 @@ However, due to the poor quality of the dataset itself(characteristic of UGC), a
 In retrospect, the project looks really terrible. I have since been able to build much higher quality projects with better tools, as can be seen in the projects in my other repositories. Overall, though, this contribution was my first complete project on deep learning network.
 
 ## Composition
+This was my practice at that time for designing the project structure. As the project get bigger, designing packages is necessary for reusability and better management. However, this is not a good design. Later, I realized a better way to manage torch-related projects.
 
 ### configs
+This is related to the project configuration. At that time, I had thought that I could put all configuration files together. Unified format, unified management. However, managing setting requires sufficient understanding of the project itself. Too decentralized and too centralized configurations tend to complicate configuration. It can be seen that I made improvements in `config_experiments`, but I still don't understand that there are relationships and inheritance between configuration files. As a result, it was also tedious to do experimental configurations.
 
 ### data_processing
+This package is part of the dataset pipeline I constructed. There is actually more code, but this is all that is organized. Dataset processing has a lot of reusable operations. So I have since constructed som repositories to organize and summarize these operations.
 
 ### dataset
 
