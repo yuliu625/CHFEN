@@ -21,8 +21,10 @@ This is related to the project configuration. At that time, I had thought that I
 This package is part of the dataset pipeline I constructed. There is actually more code, but this is all that is organized. Dataset processing has a lot of reusable operations. So I have since constructed som repositories to organize and summarize these operations.
 
 ### dataset
+Here is the part of the dataset for this model. In most case, building a Pytorch dataloader is not a difficult problem. However, since this is a multi-modal dataset, it can be a pain to go through and coordinate the loading and processing of different types of data. Especially for tha ablation study and comparison experiments that will be done later, and for loading other datasets for generalization, the module has to be well thought and the code quality has to be good enough at the beginning(Although it seems to me that the code quality is not good enough, even though I did put a lot of effort into building this module at that time.) I provide 3 ways to build the dataset,  though only one way was actually used in the model.
 
 ### embedding
+
 
 ### model
 
