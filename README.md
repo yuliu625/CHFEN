@@ -24,16 +24,22 @@ This package is part of the dataset pipeline I constructed. There is actually mo
 Here is the part of the dataset for this model. In most case, building a Pytorch dataloader is not a difficult problem. However, since this is a multi-modal dataset, it can be a pain to go through and coordinate the loading and processing of different types of data. Especially for the ablation study and comparison experiments that will be done later, and for loading other datasets for generalization, the module has to be well thought and the code quality has to be good enough at the beginning (Although it seems to me that the code quality is not good enough, even though I did put a lot of effort into building this module at that time.) I provide 3 ways to build the dataset,  though only one way was actually used in the model.
 
 ### embedding
+This is the fundamental part of the model, encoding the raw modal data into embeddings. The encoders I provide are basically encapsulations of encoder-only models in `transformers`, so they can be easily loaded and used locally. The difficulty in implementing this module is that there are many temporal issues with the individual modalities. Some modalities are global, some are in strict correspondence with each other, and some are continuous and difficult to slice. I construct a `total_encoder` to represent my implementation.
 
+To adapt to different datasets, I build this module as a tool for the dataset package. In practice, however, it is possible to store the embeddings directly serialized for convenience and speed. Some paper do this, although multiple slices may be required due to different standards. It would be storage intensive, but it would speed things up a lot.
 
 ### model
 
+
 ### scripts
+Some shell scripts.
+
+Start the training code with `nohup`. I have since trained with better tools and created automation scripts that encapsulate the shell command operations.
 
 ### utils
 
 
-## How it works
+## How to run
 
 
 ## Summary
